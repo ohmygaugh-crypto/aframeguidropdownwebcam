@@ -215,7 +215,7 @@ AFRAME.registerComponent('gui-button', {
             gap: {type: 'number', default: 0.025},
             radius: {type: 'number', default: 0},
             margin: { type: 'vec4', default: {x: 0, y: 0, z: 0, w: 0}},
-             bevelEnabled: {type: 'boolean', default: true},
+              bevelEnabled: {type: 'boolean', default: true},
             bevelSegments: {type: 'number', default: 5},
             steps: {type: 'number', default: 2},
             bevelSize: {type: 'number', default: 4},
@@ -1979,90 +1979,90 @@ AFRAME.registerComponent('gui-item', {
 
 
 AFRAME.registerComponent('gui-label', {
-  schema: {
-    value: { type: 'string', default: '' },
-    align: { type: 'string', default: 'center' },
-    anchor: { type: 'string', default: 'center' },
-    fontSize: { type: 'number', default: 0.2 },
-    lineHeight: { type: 'number', default: 0.2 },
-    letterSpacing: { type: 'number', default: 0 },
-    fontFamily: { type: 'string', default: '' },
-    fontColor: { type: 'string', default: key_grey_dark },
-    backgroundColor: { type: 'string', default: key_offwhite },
-    opacity: { type: 'number', default: 1.0 },
-    textDepth: { type: 'number', default: 0.01 }
-  },
-  init: function init() {
-    var data = this.data;
-    var el = this.el;
-    var guiItem = el.getAttribute("gui-item");
-    this.guiItem = guiItem;
+    schema: {
+        value: { type: 'string', default: '' },
+        align: { type: 'string', default: 'center' },
+        anchor: { type: 'string', default: 'center' },
+        fontSize: { type: 'number', default: 0.2 },
+        lineHeight: { type: 'number', default: 0.2 },
+        letterSpacing: { type: 'number', default: 0 },
+        fontFamily: { type: 'string', default: '' },
+        fontColor: { type: 'string', default: key_grey_dark },
+        backgroundColor: { type: 'string', default: key_offwhite },
+        opacity: { type: 'number', default: 1.0 },
+        textDepth: { type: 'number', default: 0.01 }
+    },
+    init: function init() {
+        var data = this.data;
+        var el = this.el;
+        var guiItem = el.getAttribute("gui-item");
+        this.guiItem = guiItem;
 
-    el.setAttribute('geometry', 'primitive: plane; height: ' + guiItem.height + '; width: ' + guiItem.width + ';');
-    el.setAttribute('material', 'shader: flat; side:front; color:' + data.backgroundColor + '; transparent: true; opacity: ' + data.opacity + '; alphaTest: 0.5;');
+        el.setAttribute('geometry', 'primitive: plane; height: ' + guiItem.height + '; width: ' + guiItem.width + ';');
+        el.setAttribute('material', 'shader: flat; side:front; color:' + data.backgroundColor + '; transparent: true; opacity: ' + data.opacity + '; alphaTest: 0.5;');
 
-    //fallback for old font-sizing
-    if (data.fontSize > 20) {
-      // 150/750
-      var newSize = data.fontSize / 750;
-      data.fontSize = newSize;
+        //fallback for old font-sizing
+        if (data.fontSize > 20) {
+            // 150/750
+            var newSize = data.fontSize / 750;
+            data.fontSize = newSize;
+        }
+
+        this.setText(data.value);
+
+        ////WAI ARIA Support
+
+        // if(data.labelFor){
+        //   // el.setAttribute('role', 'button');
+        // }
+
+    },
+    update: function update(oldData) {
+        var data = this.data;
+        var el = this.el;
+
+        if (this.textEntity) {
+            console.log("has textEntity: " + this.textEntity);
+
+            var oldEntity = this.textEntity;
+            oldEntity.parentNode.removeChild(oldEntity);
+
+            this.setText(this.data.value);
+        } else {
+            console.log("no textEntity!");
+        }
+    },
+    setText: function setText(newText) {
+        var textEntity = document.createElement("a-entity");
+        this.textEntity = textEntity;
+        textEntity.setAttribute('troika-text', 'value: ' + newText + '; \n                                                align: ' + this.data.align + '; \n                                                anchor: ' + this.data.anchor + '; \n                                                baseline:center;\n                                                letterSpacing:0;\n                                                lineHeight: ' + this.data.lineHeight + ';\n                                                color:' + this.data.fontColor + ';\n                                                font:' + this.data.fontFamily + ';\n                                                fontSize:' + this.data.fontSize + ';\n                                                depthOffset:1;\n                                                maxWidth:' + this.guiItem.width / 1.05 + ';\n                                                ');
+        textEntity.setAttribute('position', '0 0 ' + this.data.textDepth);
+        //        textEntity.setAttribute('troika-text-material', `shader: flat;`);
+        this.el.appendChild(textEntity);
     }
-
-    this.setText(data.value);
-
-    ////WAI ARIA Support
-
-    // if(data.labelFor){
-    //   // el.setAttribute('role', 'button');
-    // }
-
-  },
-  update: function update(oldData) {
-    var data = this.data;
-    var el = this.el;
-
-    if (this.textEntity) {
-      console.log("has textEntity: " + this.textEntity);
-
-      var oldEntity = this.textEntity;
-      oldEntity.parentNode.removeChild(oldEntity);
-
-      this.setText(this.data.value);
-    } else {
-      console.log("no textEntity!");
-    }
-  },
-  setText: function setText(newText) {
-    var textEntity = document.createElement("a-entity");
-    this.textEntity = textEntity;
-    textEntity.setAttribute('troika-text', 'value: ' + newText + '; \n                                                align: ' + this.data.align + '; \n                                                anchor: ' + this.data.anchor + '; \n                                                baseline:center;\n                                                letterSpacing:0;\n                                                lineHeight: ' + this.data.lineHeight + ';\n                                                color:' + this.data.fontColor + ';\n                                                font:' + this.data.fontFamily + ';\n                                                fontSize:' + this.data.fontSize + ';\n                                                depthOffset:1;\n                                                maxWidth:' + this.guiItem.width / 1.05 + ';\n                                                ');
-    textEntity.setAttribute('position', '0 0 ' + this.data.textDepth);
-    //        textEntity.setAttribute('troika-text-material', `shader: flat;`);
-    this.el.appendChild(textEntity);
-  }
 });
 
 AFRAME.registerPrimitive('a-gui-label', {
-  defaultComponents: {
-    'gui-item': { type: 'label' },
-    'gui-label': {}
-  },
-  mappings: {
-    'width': 'gui-item.width',
-    'height': 'gui-item.height',
-    'margin': 'gui-item.margin',
-    'align': 'gui-label.align',
-    'anchor': 'gui-label.anchor',
-    'value': 'gui-label.value',
-    'font-size': 'gui-label.fontSize',
-    'line-height': 'gui-label.lineHeight',
-    'letter-spacing': 'gui-label.letterSpacing',
-    'font-color': 'gui-label.fontColor',
-    'font-family': 'gui-label.fontFamily',
-    'background-color': 'gui-label.backgroundColor',
-    'opacity': 'gui-label.opacity',
-    'text-depth': 'gui-label.textDepth'
-  }
+    defaultComponents: {
+        'gui-item': { type: 'label' },
+        'gui-label': {}
+    },
+    mappings: {
+        'width': 'gui-item.width',
+        'height': 'gui-item.height',
+        'margin': 'gui-item.margin',
+        'align': 'gui-label.align',
+        'anchor': 'gui-label.anchor',
+        'value': 'gui-label.value',
+        'font-size': 'gui-label.fontSize',
+        'line-height': 'gui-label.lineHeight',
+        'letter-spacing': 'gui-label.letterSpacing',
+        'font-color': 'gui-label.fontColor',
+        'font-family': 'gui-label.fontFamily',
+        'background-color': 'gui-label.backgroundColor',
+        'opacity': 'gui-label.opacity',
+        'text-depth': 'gui-label.textDepth'
+    }
 });
 
 /***/ }),
@@ -8066,13 +8066,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
        Licensed under the Apache License, Version 2.0 (the "License");
        you may not use this file except in compliance with the License.
        You may obtain a copy of the License at
-            http://www.apache.org/licenses/LICENSE-2.0
-        Unless required by applicable law or agreed to in writing, software
+             http://www.apache.org/licenses/LICENSE-2.0
+         Unless required by applicable law or agreed to in writing, software
        distributed under the License is distributed on an "AS IS" BASIS,
        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
        See the License for the specific language governing permissions and
        limitations under the License.
-      A tool to convert a WOFF back to a TTF/OTF font file, in pure Javascript
+       A tool to convert a WOFF back to a TTF/OTF font file, in pure Javascript
     */
 
     function convert_streams(bufferIn, tinyInflate) {
@@ -8580,11 +8580,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
     /**
     @class GlyphsGeometry
-     A specialized Geometry for rendering a set of text glyphs. Uses InstancedBufferGeometry to
+      A specialized Geometry for rendering a set of text glyphs. Uses InstancedBufferGeometry to
     render the glyphs using GPU instancing of a single quad, rather than constructing a whole
     geometry with vertices, for much smaller attribute arraybuffers according to this math:
-       Where N = number of glyphs...
-       Instanced:
+        Where N = number of glyphs...
+        Instanced:
       - position: 4 * 3
       - index: 2 * 3
       - normal: 4 * 3
@@ -8592,16 +8592,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       - glyph x/y bounds: N * 4
       - glyph indices: N * 1
       = 5N + 38
-       Non-instanced:
+        Non-instanced:
       - position: N * 4 * 3
       - index: N * 2 * 3
       - normal: N * 4 * 3
       - uv: N * 4 * 2
       - glyph indices: N * 1
       = 39N
-     A downside of this is the rare-but-possible lack of the instanced arrays extension,
+      A downside of this is the rare-but-possible lack of the instanced arrays extension,
     which we could potentially work around with a fallback non-instanced implementation.
-     */
+      */
 
     var GlyphsGeometry = function (_THREE$InstancedBuffe) {
       _inherits(GlyphsGeometry, _THREE$InstancedBuffe);

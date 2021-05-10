@@ -4,16 +4,19 @@
   	<meta charset="utf-8">
   	<title>A-Frame GUI Dropdown</title>
     <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+	<script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.6.0/aframe/build/aframe-ar.js"></script>
 
     <script src="js/aframe-gui.js"></script>
     <script src="js/gui-env.js"></script>
 
 </head>
-<body>
-	<a-scene gui-env>
+<body style='margin : 0px; overflow: hidden;'>
+
+	<a-scene gui-env embedded arjs='sourceType: webcam;'>
 		<a-assets>
 			<a-asset-item id="iconfontsolid" src="assets/fonts/fa-solid-900.ttf"></a-asset-item>
 			<a-asset-item id="textfont" src="assets/fonts/PermanentMarker-Regular.ttf"></a-asset-item>
+			<video id="webcam" playsinline></video>
 		</a-assets>
 
 		<a-torus-knot id="knot" 
@@ -101,7 +104,7 @@
 
 		<!-- Camera + cursor. -->
 		<a-entity id="cameraRig" position="0 1.6 0">
-			<a-camera look-controls wasd-controls position="0 0 0">
+			<a-camera camera="active: true" look-controls wasd-controls position="0 0 0">
 				<a-gui-cursor id="cursor"
 						  raycaster="objects: [gui-interactable]"
 						  fuse="true" fuse-timeout="2000"
@@ -147,6 +150,19 @@
 
 
 	</script>
+
+<script>
+	// You can also set which camera to use (front/back/etc)
+	// @SEE https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+	navigator.mediaDevices.getUserMedia({audio: false, video: true})
+	.then(stream => {
+	  let $video = document.querySelector('video')
+	  $video.srcObject = stream
+	  $video.onloadedmetadata = () => {
+		$video.play()
+	  }
+	})
+  </script>
 
 </body>
 </html>
